@@ -3,6 +3,5 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Standard CrewAI / LiteLLM model string.
-# This works perfectly in the C:\W environment where LiteLLM is correctly installed.
-LLM_MODEL = "groq/llama3-70b-8192"
+# Llama 3.1 70B is often more stable for native tool-use on Groq
+LLM_MODEL = "groq/llama-3.1-70b-versatile"

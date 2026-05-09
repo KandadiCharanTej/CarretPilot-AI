@@ -3,7 +3,9 @@ from app.agents.manager_agent import manager_agent
 from app.agents.hunter_agent import hunter_agent
 from app.agents.eligibility_agent import eligibility_agent
 from app.agents.resume_agent import resume_agent
-from app.agents.application_agent import application_agent
+from app.agents.application_agent import application_agent, apply_tool
+from app.tools.search_tool import search_web
+from app.tools.resume_tool import optimize_resume
 
 def create_workflow(student_profile=None):
     if student_profile is None:
@@ -20,10 +22,14 @@ def create_workflow(student_profile=None):
         Find the top 3 AI internships or hackathons 
         for a student with these interests: {student_profile.get('interests', [])}.
         Focus on quality and relevance.
+        
+        IMPORTANT: Use the 'Search Web' tool to find real, current opportunities.
         """,
         agent=hunter_agent,
+        tools=[search_web],
         expected_output="A list of 3 specific opportunity URLs with brief descriptions."
     )
+
 
     eligibility_task = Task(
         description=f"""
@@ -45,6 +51,7 @@ def create_workflow(student_profile=None):
         and optimize it for the selected opportunity found in the previous task.
         """,
         agent=resume_agent,
+        tools=[optimize_resume],
         expected_output="A summary of optimized skills.",
         context=[eligibility_task]
     )
@@ -62,9 +69,11 @@ def create_workflow(student_profile=None):
         - Skills: {', '.join(student_profile.get('skills', []))}
         """,
         agent=application_agent,
+        tools=[apply_tool],
         expected_output="Application submission status.",
         context=[eligibility_task, resume_task]
     )
+
 
 
     crew = Crew(

@@ -5,17 +5,19 @@ This agent uses Playwright tools to apply to opportunities autonomously.
 
 from crewai import Agent
 from app.core.llm import LLM_MODEL
-from langchain.tools import tool
 from app.automation.apply import apply_to_opportunity, get_action_logs
 import os
 
+from crewai.tools import tool
 
 @tool("Apply to Opportunity")
 def apply_tool(opportunity_data: str) -> str:
     """
-    Apply to a job/internship opportunity.
-    Input should be a string with: URL, name, email, skills (comma-separated values).
-    Format: URL|name|email|skills
+    Apply to a job or internship opportunity autonomously.
+    Args:
+        opportunity_data (str): Formatted as URL|name|email|skills
+    Returns:
+        str: Status of the application.
     """
     try:
         parts = opportunity_data.split("|")
@@ -48,22 +50,18 @@ def apply_tool(opportunity_data: str) -> str:
 
 application_agent = Agent(
     role="Application Agent",
-
     goal="""
     Autonomously apply to internships, hackathons, and opportunities on behalf of students.
     Fill forms, upload resumes, submit applications, and verify success.
     Retry intelligently if something fails.
     """,
-
     backstory="""
     You are an elite AI automation specialist with deep expertise in web automation.
     You navigate websites, fill forms with precision, upload documents, and submit applications.
     If an attempt fails, you analyze the error and adapt your strategy — you never give up easily.
     Your mission is to maximize the student's application success rate.
     """,
-
     verbose=True,
     llm=LLM_MODEL,
-    tools=[apply_tool],
-    max_iter=5  # Self-correction: try up to 5 strategies
+    max_iter=5
 )

@@ -12,7 +12,5 @@ hunter_agent = Agent(
     Expert AI researcher specialized
     in discovering student opportunities.
     """,
-    verbose=True,
-    llm=LLM_MODEL,
-    tools=[search_web]
+    llm=LLM_MODEL
 )

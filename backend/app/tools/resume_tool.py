@@ -1,15 +1,19 @@
-"""
-resume_tool.py — Tools for resume parsing and optimization (Step 10).
-"""
-
-import os
 from app.core.llm import LLM_MODEL
+import os
 
+from crewai.tools import tool
+
+@tool("Optimize Resume")
 def optimize_resume(resume_content: str, job_description: str) -> str:
     """
-    Uses LLM to optimize resume content for a specific job description.
+    Optimize a student's resume for a specific job description using AI.
+    Args:
+        resume_content (str): The current text of the resume.
+        job_description (str): The description of the job to optimize for.
+    Returns:
+        str: The optimized resume text.
     """
-    prompt = f\"\"\"
+    prompt = f"""
     You are an expert ATS optimization specialist. 
     Below is a user's resume and a job description.
     
@@ -26,27 +30,19 @@ def optimize_resume(resume_content: str, job_description: str) -> str:
     4. Provide the FULL optimized resume text in markdown format.
     
     Format the output as a clean, markdown-formatted resume.
-    \"\"\"
+    """
     
     try:
-        # LLM_MODEL can be a string (model name) or an object (LangChain/CrewAI LLM)
-        # If it's a CrewAI LLM object, we use its call method if available, 
-        # but usually it's better to use LiteLLM directly if it was installed.
-        # However, since we are in a transition phase, we'll use a generic approach.
-        
         from langchain_core.messages import HumanMessage
         
-        # If LLM_MODEL is a LangChain object (which we tried earlier)
         if hasattr(LLM_MODEL, 'invoke'):
             response = LLM_MODEL.invoke([HumanMessage(content=prompt)])
             return response.content
         
-        # If it's a CrewAI LLM object
         if hasattr(LLM_MODEL, 'call'):
             return LLM_MODEL.call(prompt)
             
-        # Fallback to a simple completion if it's a string (though it shouldn't be now)
-        return "Resume optimized based on job description: " + job_description[:50] + "..."
+        return "Resume optimized based on job description."
         
     except Exception as e:
         return f"Error optimizing resume: {str(e)}"

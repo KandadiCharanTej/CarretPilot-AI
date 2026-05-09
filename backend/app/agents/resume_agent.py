@@ -14,6 +14,6 @@ resume_agent = Agent(
     the integrity of the candidate's experience.
     """,
     verbose=True,
-    llm=LLM_MODEL,
-    tools=[optimize_resume]
+    llm=LLM_MODEL
 )
+
